@@ -1,0 +1,53 @@
+import requests                  # Importing the requests library to send HTTP requests
+from bs4 import BeautifulSoup    # Importing BeautifulSoup from the bs4 library for HTML parsing
+import pandas as pd              # Importing pandas library for data manipulation and analysis
+##
+def scrape_wiki_postings(page_title):
+    """
+    Function to scrape the content of a Wikipedia page based on the provided page title.
+    """
+
+    url = f"https://en.wikipedia.org/wiki/{page_title}"  # Constructing the URL for the given page title on Wikipedia
+
+    response = requests.get(url)  # Sending a GET request to the URL and storing the response
+
+    soup = BeautifulSoup(response.content, 'html.parser')  # Parsing the HTML content of the response using BeautifulSoup
+
+
+
+
+    content = soup.find(id='content')  # Finding the HTML element with id 'content' on the page
+
+    """
+    The line content = soup.find(id='content') is using the find method from BeautifulSoup to find the HTML element with the id attribute set to 'content'.
+    HTML elements can have attributes that provide additional information about them. The id attribute is a unique identifier for an element on a webpage.
+    It helps to uniquely identify a specific element within the HTML document. In the case of this code, the id attribute is used to locate the specific
+    element on the Wikipedia page that has an id of 'content'. This element typically represents the main content area of the page, 
+    where the actual article text is found. By locating this element, we can then further extract the relevant information or manipulate its contents as needed.
+    Once the content element is found, further operations can be performed on it, such as finding specific child elements, extracting text, or performing additional data extraction tasks based on the structure of the HTML.
+    """
+
+
+
+
+    paragraphs = content.find('div', class_='mw-parser-output').find_all('p')  # Finding all paragraph elements within the 'content' element
+
+    """
+    the line paragraphs = content.find('div', class_='mw-parser-output').find_all('p') is performing a chained sequence of find and find_all operations on the content element.
+    content.find('div', class_='mw-parser-output'): This line finds the first <div> element within the content element that has a CSS class attribute set to 'mw-parser-output'. 
+    The class_ parameter is used instead of class because class is a reserved keyword in Python. This operation is looking for a specific <div> element that contains the main content of the Wikipedia article.
+    .find_all('p'): This line further operates on the result of the previous find operation. It finds all the <p> elements (paragraphs) within the previously found <div> element.
+    This will retrieve a list of all the paragraph elements within the main content area of the Wikipedia article. By chaining these operations together, we are effectively finding the specific <div> element with the class 'mw-parser-output' that contains the main content of the article, and then extracting all the paragraph elements within that <div>. This allows us to collect the text content of all the paragraphs in the article for further processing or analysis.
+    """
+
+
+
+
+    content_text = '\n'.join([p.get_text() for p in paragraphs])  # Extracting the text content from each paragraph and joining them with newline separator
+
+    return content_text
+
+if __name__ == '__main__':
+    page_title = 'Boogie_(2021_film)'  # Specify the page title you want to scrape
+    wiki_content = scrape_wiki_postings(page_title)  # Call the scrape_wiki_postings function to scrape the content
+    print(wiki_content)  # Print the scraped content to the console
